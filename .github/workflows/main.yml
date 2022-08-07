@@ -24,19 +24,19 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-      - name: Docker Login
+      - name: Autenticando usuario no Docker
         uses: docker/login-action@v2.0.0
         with:
           username: ${{secrets.DOCKERHUB_USER}}
           password: ${{secrets.DOCKERHUB_PWD}}
           
-      - name: Build and push Docker images
+      - name: Construindo a imagem e enviando para o Docker Hub
         uses: docker/build-push-action@v3.1.1
         with:
           file: ./src/Dockerfile
           context: ./src
           push: true
-          tags:
+          tags: |
             plroger/kube-news:latest
             plroger/kube-news:${{github.run_number}}
   CD:   
@@ -45,7 +45,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Kubernetes Set Context
+      - name: Definindo o Kubeconfig
         uses: Azure/k8s-set-context@v3.0
         with:
           # Acceptable values: kubeconfig or service-account or service-principal
@@ -53,7 +53,7 @@ jobs:
           # Contents of kubeconfig file
           kubeconfig: ${{secrets.K8S_CONFIG}}
       
-      - name: Deploy to Kubernetes cluster
+      - name: Efetuando o Deploy no Kubernetes
         uses: Azure/k8s-deploy@v4.3
         with:
           images: plroger/kube-news:${{github.run_number}}
