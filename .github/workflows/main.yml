@@ -58,4 +58,4 @@ jobs:
         with:
           images: plroger/kube-news:${{github.run_number}}
           manifest:
-            k82/deployment.yaml
+            k8s/deployment.yaml
